@@ -5,11 +5,11 @@
  */
 function printSourceAndDestination(ticketsStringArray) {
 	const tickets = [];
-	const cities = new Map(); // Key added only once is the source and the destination
+	const cities = new Map(); // Keys added only once is the source and the destination
 	let source, destination;
 
 	for (let i = 0; i < ticketsStringArray.length; i++) {
-		let [city1, city2] = ticketsStringArray[i].split('-');		
+		const [city1, city2] = ticketsStringArray[i].split('-');		
 		// Save cities as Map
 		let count = cities.get(city1) || 0;
 		cities.set(city1, count + 1)
@@ -26,7 +26,38 @@ function printSourceAndDestination(ticketsStringArray) {
 	console.log('Traveling from %s to %s', source.from, destination.to);
 }
 
+/**
+ * Receives list of tickets as array, prints source and distination. 
+ * Algorithm complexity: O(n+m) 
+ * @param {Array<String>} ticketsStringArray - tickets as array of stings in "source-destination" format
+ */
+function printSourceAndDestination2(ticketsStringArray) {
+	const sources = [];
+	const cities = new Map(); // Keys added only once is the source and the destination
 
+	for (let i = 0; i < ticketsStringArray.length; i++) {
+		const [city1, city2] = ticketsStringArray[i].split('-');		
+		// Save cities as Map
+		let count = cities.get(city1) || 0;
+		if (count < 1) cities.set(city1, count + 1); else cities.delete(city1); // Delete city on second occurrence
+		count = cities.get(city2) || 0;
+		if (count < 1) cities.set(city2, count + 1); else cities.delete(city2); // Delete city on second occurrence
+		// Save every source cities to compare later
+		sources.push(city1);
+	}
+
+	const [[edge1,], [edge2,]] = [...cities]; // Names of the source and the destination
+	for (let i = 0; i < sources.length; i++) {
+		if (edge1 === sources[i]) {
+			console.log('Traveling from %s to %s', edge1, edge2);
+			return;
+		}		
+		if (edge2 === sources[i]) {
+			console.log('Traveling from %s to %s', edge2, edge1);
+			return;
+		}		
+	}	
+}
 
 /**
  * Receives list of tickets as array, resorder array of tickets to follow the traveling path
@@ -40,7 +71,7 @@ function sortTickets(ticketsStringArray) {
 	let source, destination;
 
 	for (let i = 0; i < ticketsStringArray.length; i++) {
-		let [city1, city2] = ticketsStringArray[i].split('-');
+		const [city1, city2] = ticketsStringArray[i].split('-');
 		
 		// Save cities as Map
 		let count = cities.get(city1) || 0;
@@ -91,6 +122,7 @@ function test() {
 	tickets.push('Kyiv-Lviv');
 
 	printSourceAndDestination(tickets);
+	printSourceAndDestination2(tickets);
 
 	//arrangeTickets(tickets);
 }
