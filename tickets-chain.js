@@ -5,18 +5,18 @@
  */
 function printSourceAndDestination(ticketsStringArray) {
 	const tickets = [];
-	const cities = new Map(); // Keys added only once is the source and the destination
+	const cities = new Map(); // Key added only once is the source or the destination
 	let source, destination;
 
 	for (let i = 0; i < ticketsStringArray.length; i++) {
-		const [city1, city2] = ticketsStringArray[i].split('-');		
-		// Save cities as Map
+		const [city1, city2] = ticketsStringArray[i].split('-');
+		// Save city counts as Map
 		let count = cities.get(city1) || 0;
 		cities.set(city1, count + 1)
 		count = cities.get(city2) || 0;
 		cities.set(city2, count + 1)
 		// Save tickets as Objects
-		tickets.push({from: city1, to: city2});
+		tickets.push({ from: city1, to: city2 });
 	}
 
 	tickets.forEach(ticket => {
@@ -33,16 +33,16 @@ function printSourceAndDestination(ticketsStringArray) {
  */
 function printSourceAndDestination2(ticketsStringArray) {
 	const sources = [];
-	const cities = new Map(); // Keys added only once is the source and the destination
+	const cities = new Map(); // Key added only once is the source or the destination
 
 	for (let i = 0; i < ticketsStringArray.length; i++) {
-		const [city1, city2] = ticketsStringArray[i].split('-');		
-		// Save cities as Map
+		const [city1, city2] = ticketsStringArray[i].split('-');
+		// Map should contain cities that apper only once
 		let count = cities.get(city1) || 0;
 		if (count < 1) cities.set(city1, count + 1); else cities.delete(city1); // Delete city on second occurrence
 		count = cities.get(city2) || 0;
 		if (count < 1) cities.set(city2, count + 1); else cities.delete(city2); // Delete city on second occurrence
-		// Save every source cities to compare later
+		// Save every source city to compare later
 		sources.push(city1);
 	}
 
@@ -51,38 +51,39 @@ function printSourceAndDestination2(ticketsStringArray) {
 		if (edge1 === sources[i]) {
 			console.log('Traveling from %s to %s', edge1, edge2);
 			return;
-		}		
+		}
 		if (edge2 === sources[i]) {
 			console.log('Traveling from %s to %s', edge2, edge1);
 			return;
-		}		
-	}	
+		}
+	}
 }
 
 /**
- * Receives list of tickets as array, resorder array of tickets to follow the traveling path
- * Algorithm complexity: O(2*n) 
+ * Returns array of tickets that follows the traveling path. 
+ * Also prints source and distination.
+ * Algorithm complexity: O(n*log(n)) 
  * @param {Array<String>} ticketsStringArray - tickets as array of stings in "source-destination" format
  * @returns {Array<String>} - tickets as array sorted from source to destination  
  */
 function sortTickets(ticketsStringArray) {
+	if (ticketsStringArray.length < 2) return ticketsStringArray; // No sorting needed
+
 	const tickets = [];
-	const cities = new Map(); // Key added only once is the source and the destination
+	const cities = new Map(); // Key added only once is the source or the destination
 	let source, destination;
 
 	for (let i = 0; i < ticketsStringArray.length; i++) {
 		const [city1, city2] = ticketsStringArray[i].split('-');
-		
 		// Save cities as Map
 		let count = cities.get(city1) || 0;
 		cities.set(city1, count + 1)
 		count = cities.get(city2) || 0;
 		cities.set(city2, count + 1)
-
 		// Save tickets as Objects
-		tickets.push({from: city1, to: city2});
+		tickets.push({ index: i, from: city1, to: city2 });
 	}
-	console.log(cities);
+	//console.log(cities);
 
 	tickets.forEach(ticket => {
 		let count1 = cities.get(ticket.from);
@@ -100,30 +101,62 @@ function sortTickets(ticketsStringArray) {
 			destination = ticket;
 		}
 	});
-	console.log(tickets);
+	//console.log(tickets);
 
+	// Make the source ticket first
+	if (source.index !== 0) {
+		const buffer = tickets[0];
+		tickets[0] = source;
+		tickets[source.index] = buffer;
+	}
+	
+	let compareWith = source;
+	for (let i = 1; i < tickets.length; i++) {
+		for (let j = i + 1; j < tickets.length; j++) {
+			if (compareWith.to === tickets[j].from) {
+				// We found next ticket, move it to i position
+				const buffer = tickets[i];
+				tickets[i] = tickets[j];
+				tickets[j] = buffer;
+				break;
+			} 
+		}
+		compareWith = tickets[i];
+	}
+	//console.log(tickets);
 
-
-	let source = 'aaa';
-	let destination = 'bbb';
-
-	console.log('Traveling from % to %s', source, destination);
-	return //createTicketsList(tickets);
+	console.log('Traveling from %s to %s', source.from, destination.to);
+	return tickets.map(ticket => ticket.from + '-' + ticket.to); 
 }
 
-
+/**
+ * Test for "ticket" functions
+ */
 function test() {
 	let tickets = [];
+	let sortedTickets = [];
 
 	tickets.push('Lviv-Warshaw');
 	tickets.push('Prague-Vienna');
 	tickets.push('Warshaw-Prague');
-	tickets.push('Kharkiv-Kyiv');
 	tickets.push('Kyiv-Lviv');
+	tickets.push('Kharkiv-Kyiv');
 
 	printSourceAndDestination(tickets);
 	printSourceAndDestination2(tickets);
+	console.log('-------------');
 
-	//arrangeTickets(tickets);
+	sortedTickets = sortTickets(tickets);
+	console.log(sortedTickets);
+
+	tickets = [];
+	tickets.push('Warshaw-Lviv');
+	tickets.push('Vienna-Prague');
+	tickets.push('Prague-Warshaw');
+	tickets.push('Lviv-Kyiv');
+	tickets.push('Kyiv-Kharkiv');
+	sortedTickets = sortTickets(tickets);
+	console.log(sortedTickets);
+
 }
 test();
