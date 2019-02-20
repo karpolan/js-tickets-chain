@@ -3,7 +3,7 @@
  * Algorithm complexity: O(2*n)
  * @param {Array<String>} ticketsStringArray - tickets as array of stings in "source-destination" format
  */
-function printSourceAndDestination(ticketsStringArray) {
+function ticketsFromTo(ticketsStringArray) {
 	const tickets = [];
 	const cities = new Map(); // Key added only once is the source or the destination
 	let source, destination;
@@ -31,7 +31,7 @@ function printSourceAndDestination(ticketsStringArray) {
  * Algorithm complexity: O(n+m) 
  * @param {Array<String>} ticketsStringArray - tickets as array of stings in "source-destination" format
  */
-function printSourceAndDestination2(ticketsStringArray) {
+function ticketsFromTo2(ticketsStringArray) {
 	const sources = [];
 	const cities = new Map(); // Key added only once is the source or the destination
 
@@ -140,12 +140,12 @@ function test() {
 	tickets.push('Kyiv-Lviv');
 	tickets.push('Kharkiv-Kyiv');
 
-	printSourceAndDestination(tickets);
-	printSourceAndDestination2(tickets);
+	ticketsFromTo(tickets);
+	ticketsFromTo2(tickets);
 	console.log('-------------');
 
 	sortedTickets = sortTickets(tickets);
-	printSourceAndDestination(tickets);
+	ticketsFromTo(tickets);
 	console.log(sortedTickets);
 
 	tickets = [];
@@ -156,7 +156,7 @@ function test() {
 	tickets.push('Kyiv-Kharkiv');
 
 	sortedTickets = sortTickets(tickets);
-	printSourceAndDestination(tickets);
+	ticketsFromTo(tickets);
 	console.log(sortedTickets);
 
 }
