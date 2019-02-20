@@ -61,7 +61,6 @@ function printSourceAndDestination2(ticketsStringArray) {
 
 /**
  * Returns array of tickets that follows the traveling path. 
- * Also prints source and distination.
  * Algorithm complexity: O(n*log(n)) 
  * @param {Array<String>} ticketsStringArray - tickets as array of stings in "source-destination" format
  * @returns {Array<String>} - tickets as array sorted from source to destination  
@@ -125,7 +124,6 @@ function sortTickets(ticketsStringArray) {
 	}
 	//console.log(tickets);
 
-	console.log('Traveling from %s to %s', source.from, destination.to);
 	return tickets.map(ticket => ticket.from + '-' + ticket.to); 
 }
 
@@ -147,6 +145,7 @@ function test() {
 	console.log('-------------');
 
 	sortedTickets = sortTickets(tickets);
+	printSourceAndDestination(tickets);
 	console.log(sortedTickets);
 
 	tickets = [];
@@ -155,7 +154,9 @@ function test() {
 	tickets.push('Prague-Warshaw');
 	tickets.push('Lviv-Kyiv');
 	tickets.push('Kyiv-Kharkiv');
+
 	sortedTickets = sortTickets(tickets);
+	printSourceAndDestination(tickets);
 	console.log(sortedTickets);
 
 }
